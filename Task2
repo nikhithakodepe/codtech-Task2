@@ -1,0 +1,111 @@
+import statistics
+
+class StudentGradeCalculator:
+    def __init__(self):
+        self.students = {}
+
+    def add_student(self, name):
+        if name not in self.students:
+            self.students[name] = []
+            print(f"Student '{name}' added.")
+        else:
+            print(f"Student '{name}' already exists.")
+
+    def add_grade(self, name, grade):
+        if name in self.students:
+            self.students[name].append(grade)
+            print(f"Grade '{grade}' added for student '{name}'.")
+        else:
+            print(f"Student '{name}' not found.")
+
+    def calculate_statistics(self, grades):
+        if not grades:
+            return "No grades to calculate."
+        try:
+            average = sum(grades) / len(grades)
+            highest = max(grades)
+            lowest = min(grades)
+            median = statistics.median(grades)
+            stdev = statistics.stdev(grades) if len(grades) > 1 else 0
+            return {
+                'average': average,
+                'highest': highest,
+                'lowest': lowest,
+                'median': median,
+                'standard_deviation': stdev
+            }
+        except statistics.StatisticsError as e:
+            return str(e)
+
+    def view_grades(self, name):
+        if name in self.students:
+            grades = self.students[name]
+            stats = self.calculate_statistics(grades)
+            if isinstance(stats, dict):
+                print(f"Grades for student '{name}': {grades}")
+                print(f"Average grade: {stats['average']:.2f}")
+                print(f"Highest grade: {stats['highest']:.2f}")
+                print(f"Lowest grade: {stats['lowest']:.2f}")
+                print(f"Median grade: {stats['median']:.2f}")
+                print(f"Standard deviation: {stats['standard_deviation']:.2f}")
+            else:
+                print(stats)
+        else:
+            print(f"Student '{name}' not found.")
+
+    def view_all_students(self):
+        if self.students:
+            for name, grades in self.students.items():
+                print(f"\nStudent: {name}")
+                if grades:
+                    stats = self.calculate_statistics(grades)
+                    if isinstance(stats, dict):
+                        print(f"Grades: {grades}")
+                        print(f"Average: {stats['average']:.2f}")
+                        print(f"Highest: {stats['highest']:.2f}")
+                        print(f"Lowest: {stats['lowest']:.2f}")
+                        print(f"Median: {stats['median']:.2f}")
+                        print(f"Standard deviation: {stats['standard_deviation']:.2f}")
+                    else:
+                        print(stats)
+                else:
+                    print("No grades recorded.")
+        else:
+            print("No students found.")
+
+def main():
+    calculator = StudentGradeCalculator()
+
+    while True:
+        print("\nStudent Grade Calculator")
+        print("1. Add Student")
+        print("2. Add Grade")
+        print("3. View Grades")
+        print("4. View All Students")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            name = input("Enter student name: ")
+            calculator.add_student(name)
+        elif choice == '2':
+            name = input("Enter student name: ")
+            try:
+                grade = float(input("Enter grade: "))
+                calculator.add_grade(name, grade)
+            except ValueError:
+                print("Invalid input. Please enter a numeric grade.")
+        elif choice == '3':
+            name = input("Enter student name: ")
+            calculator.view_grades(name)
+        elif choice == '4':
+            calculator.view_all_students()
+        elif choice == '5':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please select a valid option.")
+
+if __name__ == "__main__":
+    main()
